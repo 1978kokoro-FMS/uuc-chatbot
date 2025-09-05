@@ -18,11 +18,11 @@ st.caption("궁금한 회사 규정에 대해 질문해주세요.")
 # Streamlit 앱을 배포할 때는 st.secrets을 사용합니다.
 # 로컬에서 테스트할 때는 .streamlit/secrets.toml 파일을 만들어 키를 보관하세요.
 try:
-    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+    OPENAI_API_KEY = st.secrets["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"]
     openai.api_key = OPENAI_API_KEY
 
-    SUPABASE_URL = st.secrets["SUPABASE_URL"]
-    SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+    SUPABASE_URL = st.secrets["https://rbjddlpvpxisurewahtu.supabase.co"]
+    SUPABASE_KEY = st.secrets["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiamRkbHB2cHhpc3VyZXdhaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzNjMxNDEsImV4cCI6MjA3MTkzOTE0MX0.AKmGTR0C1tF608hNV3F2RComqpaPb3IWdarwQIDzuuU"]
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 except KeyError:
     st.error("🚨 OpenAI 또는 Supabase의 API Key가 설정되지 않았습니다. Streamlit Secrets를 확인해주세요.")
@@ -109,4 +109,5 @@ if prompt := st.chat_input("질문을 입력하세요..."):
             st.markdown(response)
     
     # 챗봇 답변을 대화 기록에 추가
+
     st.session_state.messages.append({"role": "assistant", "content": response})

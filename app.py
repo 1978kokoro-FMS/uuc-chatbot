@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 1단계: 기본 스타일 추가
+# 2단계: 채팅 메시지 스타일 개선
 st.markdown("""
 <style>
     .stApp {
@@ -24,14 +24,61 @@ st.markdown("""
         margin: 2rem 0;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
+    
+    /* 채팅 메시지 스타일 */
+    div[data-testid="chat-message-user"] {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        border-radius: 20px 20px 5px 20px !important;
+        margin: 1rem 0 !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    div[data-testid="chat-message-assistant"] {
+        background: linear-gradient(135deg, #f093fb, #f5576c) !important;
+        border-radius: 20px 20px 20px 5px !important;
+        margin: 1rem 0 !important;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3) !important;
+    }
+    
+    /* 메시지 텍스트 색상 */
+    div[data-testid="chat-message-user"] p,
+    div[data-testid="chat-message-assistant"] p {
+        color: white !important;
+        font-weight: 500 !important;
+    }
+    
+    /* 입력창 스타일 */
+    div[data-testid="stChatInputContainer"] {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid #667eea !important;
+        border-radius: 25px !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2) !important;
+    }
+    
+    /* 버튼 스타일 */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 25px !important;
+        padding: 0.7rem 1.5rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # 커스텀 제목
 st.markdown("""
 <div class="main-title">
-    <h1 style="color: #333; margin: 0;">🤖 회사 규정 안내 챗봇</h1>
-    <p style="color: #666; margin: 1rem 0 0 0;">궁금한 회사 규정에 대해 질문해주세요.</p>
+    <h1 style="color: #333; margin: 0; font-size: 2.2rem;">🤖 회사 규정 안내 챗봇</h1>
+    <p style="color: #666; margin: 1rem 0 0 0; font-size: 1.1rem;">궁금한 회사 규정에 대해 질문해주세요.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -92,9 +139,11 @@ if "messages" not in st.session_state:
 
 # 대화 초기화 버튼
 if len(st.session_state.messages) > 1:
-    if st.button("🔄 대화 초기화"):
-        st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
-        st.rerun()
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🔄 대화 초기화"):
+            st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
+            st.rerun()
 
 # 채팅 UI
 for message in st.session_state.messages:
@@ -112,4 +161,3 @@ if prompt := st.chat_input("질문을 입력하세요..."):
             st.markdown(response)
     
     st.session_state.messages.append({"role": "assistant", "content": response})
-

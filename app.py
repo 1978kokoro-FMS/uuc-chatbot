@@ -1,3 +1,13 @@
+# 맨 위에 이 코드만 추가해서 테스트
+st.markdown("""
+<style>
+.stApp {
+    background: red !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # app.py (최종 보안 버전 + 심플한 UI)
 import streamlit as st
 import openai
@@ -246,3 +256,4 @@ st.markdown("""
     <p>💼 더 자세한 정보가 필요하시면 인사팀에 문의해주세요.</p>
 </div>
 """, unsafe_allow_html=True)
+

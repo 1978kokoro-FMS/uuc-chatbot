@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2단계: 채팅 메시지 스타일 개선
+# CSS 스타일
 st.markdown("""
 <style>
     .stApp {
@@ -25,34 +25,36 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     
-    /* 채팅 메시지 스타일 */
-    div[data-testid="chat-message-user"] {
-        background: linear-gradient(135deg, #667eea, #764ba2) !important;
-        border-radius: 20px 20px 5px 20px !important;
-        margin: 1rem 0 !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    /* 커스텀 메시지 버블 */
+    .user-message {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 20px 20px 5px 20px;
+        margin: 1rem 0;
+        margin-left: 20%;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        font-weight: 500;
     }
     
-    div[data-testid="chat-message-assistant"] {
-        background: linear-gradient(135deg, #f093fb, #f5576c) !important;
-        border-radius: 20px 20px 20px 5px !important;
-        margin: 1rem 0 !important;
-        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3) !important;
+    .assistant-message {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 20px 20px 20px 5px;
+        margin: 1rem 0;
+        margin-right: 20%;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        font-weight: 500;
     }
     
-    /* 메시지 텍스트 색상 */
-    div[data-testid="chat-message-user"] p,
-    div[data-testid="chat-message-assistant"] p {
-        color: white !important;
-        font-weight: 500 !important;
-    }
-    
-    /* 입력창 스타일 */
-    div[data-testid="stChatInputContainer"] {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border: 2px solid #667eea !important;
-        border-radius: 25px !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2) !important;
+    /* 입력창 컨테이너 */
+    .chat-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     
     /* 버튼 스타일 */
@@ -137,6 +139,9 @@ def get_chatbot_response(query):
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
 
+# 채팅 컨테이너
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+
 # 대화 초기화 버튼
 if len(st.session_state.messages) > 1:
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -145,19 +150,22 @@ if len(st.session_state.messages) > 1:
             st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
             st.rerun()
 
-# 채팅 UI
+# 커스텀 메시지 표시
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] == "user":
+        st.markdown(f'<div class="user-message">👤 {message["content"]}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="assistant-message">🤖 {message["content"]}</div>', unsafe_allow_html=True)
 
+st.markdown('</div>', unsafe_allow_html=True)
+
+# 입력창
 if prompt := st.chat_input("질문을 입력하세요..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
     
-    with st.chat_message("assistant"):
-        with st.spinner("답변을 생각하고 있어요..."):
-            response = get_chatbot_response(prompt)
-            st.markdown(response)
+    # 답변 생성
+    with st.spinner("답변을 생각하고 있어요..."):
+        response = get_chatbot_response(prompt)
     
     st.session_state.messages.append({"role": "assistant", "content": response})
+    st.rerun()

@@ -1,4 +1,4 @@
-# app.py (최종 보안 버전 + 개선된 UI)
+# app.py (최종 보안 버전 + 심플한 UI)
 import streamlit as st
 import openai
 from supabase import create_client, Client
@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 2. 커스텀 CSS ---
+# --- 2. 심플한 커스텀 CSS ---
 st.markdown("""
 <style>
     /* 전체 배경 */
@@ -95,18 +95,7 @@ st.markdown("""
         border-top-color: #667eea !important;
     }
     
-    /* 제안 버튼 스타일 */
-    .suggestion-container {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 2rem;
-        margin: 1rem auto;
-        max-width: 800px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
+    /* 초기화 버튼 스타일 */
     .stButton > button {
         background: linear-gradient(135deg, #667eea, #764ba2) !important;
         color: white !important;
@@ -117,8 +106,6 @@ st.markdown("""
         font-weight: 600 !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3) !important;
-        width: 100% !important;
-        margin: 0.5rem 0 !important;
     }
     
     .stButton > button:hover {
@@ -228,61 +215,20 @@ def get_chatbot_response(query):
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
 
-if "show_suggestions" not in st.session_state:
-    st.session_state.show_suggestions = True
-
-# --- 7. 제안 질문들 (처음에만 표시) ---
-if st.session_state.show_suggestions and len(st.session_state.messages) == 1:
-    st.markdown("""
-    <div class="suggestion-container fade-in">
-        <h3 style="color: #333; margin-bottom: 1rem; text-align: center;">💡 자주 묻는 질문들</h3>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("🕐 근무시간 규정", key="time"):
-            user_input = "근무시간 규정에 대해 알려주세요"
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            st.session_state.show_suggestions = False
-            st.rerun()
-            
-        if st.button("🏥 건강검진 제도", key="health"):
-            user_input = "건강검진 제도에 대해 알려주세요"
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            st.session_state.show_suggestions = False
-            st.rerun()
-    
-    with col2:
-        if st.button("🌴 휴가 신청 방법", key="vacation"):
-            user_input = "휴가 신청은 어떻게 하나요?"
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            st.session_state.show_suggestions = False
-            st.rerun()
-            
-        if st.button("📋 복리후생 혜택", key="benefits"):
-            user_input = "복리후생 혜택에는 뭐가 있나요?"
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            st.session_state.show_suggestions = False
-            st.rerun()
-
-# --- 8. 대화 초기화 버튼 ---
+# --- 7. 대화 초기화 버튼 (대화가 있을 때만 표시) ---
 if len(st.session_state.messages) > 1:
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
         if st.button("🔄 대화 초기화", key="clear"):
             st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
-            st.session_state.show_suggestions = True
             st.rerun()
 
-# --- 9. Streamlit UI 및 대화 로직 ---
+# --- 8. Streamlit UI 및 대화 로직 ---
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 if prompt := st.chat_input("질문을 입력하세요..."):
-    st.session_state.show_suggestions = False
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -294,7 +240,7 @@ if prompt := st.chat_input("질문을 입력하세요..."):
     
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-# --- 10. 푸터 ---
+# --- 9. 푸터 ---
 st.markdown("""
 <div style="text-align: center; margin-top: 3rem; padding: 2rem; color: rgba(255, 255, 255, 0.8);">
     <p>💼 더 자세한 정보가 필요하시면 인사팀에 문의해주세요.</p>

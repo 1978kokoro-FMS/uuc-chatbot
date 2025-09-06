@@ -50,11 +50,9 @@ st.markdown("""
     
     /* 입력창 컨테이너 */
     .chat-container {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 20px;
+        background: transparent;
         padding: 1.5rem;
         margin: 2rem 0;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     
     /* 버튼 스타일 */

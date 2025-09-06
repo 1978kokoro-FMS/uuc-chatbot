@@ -9,8 +9,31 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🤖 회사 규정 안내 챗봇")
-st.caption("궁금한 회사 규정에 대해 질문해주세요.")
+# 1단계: 기본 스타일 추가
+st.markdown("""
+<style>
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .main-title {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        margin: 2rem 0;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 커스텀 제목
+st.markdown("""
+<div class="main-title">
+    <h1 style="color: #333; margin: 0;">🤖 회사 규정 안내 챗봇</h1>
+    <p style="color: #666; margin: 1rem 0 0 0;">궁금한 회사 규정에 대해 질문해주세요.</p>
+</div>
+""", unsafe_allow_html=True)
 
 # API 키 설정
 try:
@@ -65,7 +88,13 @@ def get_chatbot_response(query):
 
 # 세션 상태 초기화
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요."}]
+    st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
+
+# 대화 초기화 버튼
+if len(st.session_state.messages) > 1:
+    if st.button("🔄 대화 초기화"):
+        st.session_state.messages = [{"role": "assistant", "content": "안녕하세요! 회사 규정에 대해 무엇이든 물어보세요. 💼"}]
+        st.rerun()
 
 # 채팅 UI
 for message in st.session_state.messages:
@@ -83,3 +112,4 @@ if prompt := st.chat_input("질문을 입력하세요..."):
             st.markdown(response)
     
     st.session_state.messages.append({"role": "assistant", "content": response})
+

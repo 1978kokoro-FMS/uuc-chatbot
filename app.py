@@ -1,4 +1,4 @@
-# app.py (원래 챗봇 코드)
+# app.py (최종 보안 버전)
 import streamlit as st
 import openai
 from supabase import create_client, Client
@@ -13,13 +13,14 @@ st.set_page_config(
 st.title("💬 회사 규정 안내 챗봇")
 st.caption("궁금한 회사 규정에 대해 질문해주세요.")
 
-# --- 2. API 키 및 Supabase 클라이언트 설정 ---
+# --- 2. API 키 및 Supabase 클라이언트 설정 (보안 방식) ---
+# 이 코드는 Streamlit Cloud의 Secrets 설정에서 키를 '불러오는' 역할만 합니다.
 try:
-    OPENAI_API_KEY = st.secrets["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"]
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
     openai.api_key = OPENAI_API_KEY
 
-    SUPABASE_URL = st.secrets["https://rbjddlpvpxisurewahtu.supabase.co"]
-    SUPABASE_KEY = st.secrets["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJiamRkbHB2cHhpc3VyZXdhaHR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzNjMxNDEsImV4cCI6MjA3MTkzOTE0MX0.AKmGTR0C1tF608hNV3F2RComqpaPb3IWdarwQIDzuuU"]
+    SUPABASE_URL = st.secrets["SUPABASE_URL"]
+    SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 except KeyError:
     st.error("🚨 OpenAI 또는 Supabase의 API Key가 설정되지 않았습니다. Streamlit Secrets를 확인해주세요.")
@@ -33,13 +34,13 @@ def get_chatbot_response(query):
             model="text-embedding-3-small"
         )
         query_embedding = response.data[0].embedding
-
+        
         results = supabase.rpc('match_documents', {
             'query_embedding': query_embedding,
             'match_threshold': 0.3,
             'match_count': 5
         }).execute()
-
+        
         if not results.data:
             return "관련된 규정 내용을 찾을 수 없습니다."
 
@@ -56,7 +57,7 @@ def get_chatbot_response(query):
 
         [답변]
         """
-
+        
         response = openai.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -64,7 +65,7 @@ def get_chatbot_response(query):
                 {"role": "user", "content": prompt}
             ]
         )
-
+        
         return response.choices[0].message.content
 
     except Exception as e:
@@ -88,7 +89,5 @@ if prompt := st.chat_input("질문을 입력하세요..."):
         with st.spinner("답변을 생각하고 있어요..."):
             response = get_chatbot_response(prompt) 
             st.markdown(response)
-
+    
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-

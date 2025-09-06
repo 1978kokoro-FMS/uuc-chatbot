@@ -89,4 +89,5 @@ def get_chatbot_response(query):
         당신은 회사 규정 전문가 AI 챗봇입니다. 아래에 제공된 '참고 규정'만을 바탕으로 사용자의 '질문'에 대해 답변해주세요.
         
         [참고 규정]
-        {conte
+        {conte}
+
